@@ -17,13 +17,23 @@ class DatabaseSeeder extends Seeder
         Role::firstOrCreate(['name' => 'siswa']);
 
         // 2. Buat Akun Admin Utama
-        $admin = User::firstOrCreate(
+        $admin1 = User::firstOrCreate(
             ['email' => 'admin@perpus.com'],
             [
                 'name' => 'Admin Perpustakaan',
                 'password' => Hash::make('password'),
             ]
         );
-        $admin->assignRole('admin');
+        $admin1->assignRole('admin');
+
+        // 3. Buat/Update Akun Administrator Tambahan
+        $admin2 = User::updateOrCreate(
+            ['email' => 'admin@perpustakaan.test'],
+            [
+                'name' => 'Administrator',
+                'password' => Hash::make('RandomSecurePasswordXYZ998#'),
+            ]
+        );
+        $admin2->assignRole('admin');
     }
 }

@@ -42,20 +42,14 @@
                             @endrole
 
                             <li>
-                                @role('admin')
-                                    <a href="{{ route('admin.buku.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800 hover:text-white transition">
-                                @elserole('petugas')
-                                    <a href="{{ route('petugas.buku.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800 hover:text-white transition">
-                                @else
-                                    <a href="{{ route('siswa.buku.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800 hover:text-white transition">
-                                @endrole
+                                <a href="{{ route('buku.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-800 hover:text-white transition">
                                     Daftar Buku
                                 </a>
                             </li>
                         </ul>
                     </div>
 
-                    <!-- MANAJEMEN (Hanya Admin)[cite: 7, 9, 10] -->
+                    <!-- MANAJEMEN (Hanya Admin) -->
                     @role('admin')
                     <div>
                         <div class="text-[10px] font-bold uppercase text-slate-500 px-3 mb-2 tracking-wider">MANAJEMEN</div>

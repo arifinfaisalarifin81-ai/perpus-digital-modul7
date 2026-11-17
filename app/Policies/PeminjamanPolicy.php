@@ -18,14 +18,18 @@ class PeminjamanPolicy
 
     /**
      * Determine whether the user can view the model.
+     * Mencegah celah IDOR (Modul VI)
      */
     public function view(User $user, Peminjaman $peminjaman): bool
-{
-    if ($user->hasRole(['admin', 'petugas'])) {
-        return true;
+    {
+        // Admin dan petugas bebas melihat semua data peminjaman
+        if ($user->hasRole(['admin', 'petugas'])) {
+            return true;
+        }
+
+        // Siswa hanya boleh melihat data peminjaman miliknya sendiri
+        return $user->id === $peminjaman->user_id;
     }
-    return $user->id === $peminjaman->user_id; // Sesuaikan kolom foreign key user di tabel peminjaman
-}
 
     /**
      * Determine whether the user can create models.

@@ -6,15 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Models\Buku;
 use Illuminate\Http\Request;
 use App\Http\Resources\BukuResource;
+use Illuminate\Support\Facades\DB; // Facade DB untuk pencarian aman
 
 class BukuController extends Controller
 {
+    /**
+     * Menampilkan daftar semua buku (GET)
+     */
     public function index()
     {
         $buku = Buku::with('kategori')->get();
         return BukuResource::collection($buku);
     }
 
+    /**
+     * Menyimpan data buku baru (POST)
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -41,7 +48,9 @@ class BukuController extends Controller
         return response()->json($buku, 201);
     }
 
-    // Detail
+    /**
+     * Menampilkan detail satu buku berdasarkan ID (GET)
+     */
     public function show($id)
     {
         $buku = Buku::with('kategori')->find($id);
@@ -53,7 +62,9 @@ class BukuController extends Controller
         return response()->json($buku, 200);
     }
 
-    // Memperbarui data buku
+    /**
+     * Memperbarui data buku (PUT / PATCH)
+     */
     public function update(Request $request, $id)
     {
         $buku = Buku::find($id);
@@ -83,7 +94,7 @@ class BukuController extends Controller
     }
 
     /**
-     * Menghapus data buku
+     * Menghapus data buku (DELETE)
      */
     public function destroy($id)
     {
@@ -96,5 +107,21 @@ class BukuController extends Controller
         $buku->delete();
 
         return response()->json(['message' => 'Buku berhasil dihapus'], 200);
+    }
+
+    /**
+     * Fitur Pencarian Buku 
+     * (Modul VI - Keamanan Web & Mitigasi SQL Injection via Parameter Binding)
+     */
+    public function cari(Request $request)
+    {
+        $judul = $request->input('judul');
+
+        // CATATAN KEAMANAN:
+        // - Rentan (Simulasi Awal A2): $buku = DB::select("SELECT * FROM bukus WHERE judul = '$judul'");
+        // - Aman (Hasil Perbaikan Soal 2): Menggunakan parameter binding (?, ?)
+        $buku = DB::select("SELECT * FROM bukus WHERE judul = ?", [$judul]);
+
+        return response()->json($buku, 200);
     }
 }

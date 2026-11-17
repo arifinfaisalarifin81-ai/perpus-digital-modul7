@@ -23,12 +23,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Mendefinisikan Gate 'kelola-buku' untuk Soal 3 (hanya admin dan petugas)
+        // Soal 3: Mendefinisikan Gate 'kelola-buku' (hanya admin dan petugas)
         Gate::define('kelola-buku', function (User $user) {
             return $user->hasRole(['admin', 'petugas']);
         });
 
-        // Mendaftarkan PeminjamanPolicy untuk Soal 4 (Pencegahan IDOR)
+        // Soal 4: Mendaftarkan PeminjamanPolicy untuk pencegahan IDOR
         Gate::policy(Peminjaman::class, PeminjamanPolicy::class);
     }
 }

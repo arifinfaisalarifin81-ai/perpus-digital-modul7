@@ -7,6 +7,8 @@ use App\Models\Buku;
 use App\Models\Peminjaman;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
+use Carbon\Carbon;
 
 class PeminjamanController extends Controller
 {
@@ -93,7 +95,7 @@ class PeminjamanController extends Controller
                     ->where('status_peminjaman', 'Disetujui');
 
         // Cek apakah kolom 'status_pengembalian' ada, lalu filter agar yang sudah dikembalikan tidak muncul
-        if (\Schema::hasColumn('peminjamans', 'status_pengembalian')) {
+        if (Schema::hasColumn('peminjamans', 'status_pengembalian')) {
             $query->where(function($q) {
                 $q->whereNull('status_pengembalian')
                   ->orWhere('status_pengembalian', '!=', 'Sudah Dikembalikan');
@@ -123,12 +125,12 @@ class PeminjamanController extends Controller
         ];
 
         // Cek apakah kolom tanggal kembali/jatuh tempo ada di database, lalu set otomatis +7 hari dari tanggal pinjam
-        if (\Schema::hasColumn('peminjamans', 'tanggal_kembali')) {
+        if (Schema::hasColumn('peminjamans', 'tanggal_kembali')) {
             $tanggalPinjam = $peminjaman->tanggal_pinjam ?? now();
-            $dataUpdate['tanggal_kembali'] = \Carbon\Carbon::parse($tanggalPinjam)->addDays(7);
-        } elseif (\Schema::hasColumn('peminjamans', 'jatuh_tempo')) {
+            $dataUpdate['tanggal_kembali'] = Carbon::parse($tanggalPinjam)->addDays(7);
+        } elseif (Schema::hasColumn('peminjamans', 'jatuh_tempo')) {
             $tanggalPinjam = $peminjaman->tanggal_pinjam ?? now();
-            $dataUpdate['jatuh_tempo'] = \Carbon\Carbon::parse($tanggalPinjam)->addDays(7);
+            $dataUpdate['jatuh_tempo'] = Carbon::parse($tanggalPinjam)->addDays(7);
         }
 
         $peminjaman->update($dataUpdate);
@@ -151,7 +153,7 @@ class PeminjamanController extends Controller
     public function kembali($id)
     {
         // Cari data peminjaman berdasarkan ID
-        $peminjaman = \App\Models\Peminjaman::findOrFail($id);
+        $peminjaman = Peminjaman::findOrFail($id);
 
         // Update status pengembalian menjadi 'Sudah Dikembalikan' atau 'Selesai'
         $peminjaman->update([
@@ -172,7 +174,7 @@ class PeminjamanController extends Controller
     {
         $peminjaman = Peminjaman::findOrFail($id);
 
-        if (\Schema::hasColumn('peminjamans', 'status_pengembalian')) {
+        if (Schema::hasColumn('peminjamans', 'status_pengembalian')) {
             $peminjaman->update([
                 'status_pengembalian' => 'Diajukan'
             ]);
@@ -180,4 +182,6 @@ class PeminjamanController extends Controller
 
         return back()->with('success', 'Permintaan pengembalian buku berhasil diajukan ke admin.');
     }
-}
+
+
+};
