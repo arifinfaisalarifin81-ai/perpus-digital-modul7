@@ -183,5 +183,24 @@ class PeminjamanController extends Controller
         return back()->with('success', 'Permintaan pengembalian buku berhasil diajukan ke admin.');
     }
 
+    // 8. Fitur Pencarian Buku (Mencegah Error 500)
+    public function cari(Request $request)
+    {
+        $keyword = $request->input('judul');
 
-};
+        if (!$keyword) {
+            return redirect()->back()->with('error', 'Masukkan kata kunci pencarian yang valid.');
+        }
+
+        $bukus = Buku::where('judul', 'LIKE', '%' . $keyword . '%')
+                     ->orWhere('penulis', 'LIKE', '%' . $keyword . '%')
+                     ->get();
+
+        if (auth()->check() && auth()->user()->hasRole('siswa')) {
+            return view('siswa.buku.index', compact('bukus'));
+        }
+
+        $kategoris = \App\Models\Kategori::all();
+        return view('admin.buku.index', compact('bukus', 'kategoris'));
+    }
+}
