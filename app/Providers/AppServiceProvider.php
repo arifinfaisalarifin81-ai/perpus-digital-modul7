@@ -18,7 +18,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        URL::forceScheme('https');
+        // Paksa HTTPS hanya saat di server production (Vercel)
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
 
         // Soal 3: Mendefinisikan Gate 'kelola-buku' (hanya admin dan petugas)
         Gate::define('kelola-buku', function (User $user) {
